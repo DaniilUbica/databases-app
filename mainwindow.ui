@@ -27,7 +27,7 @@
      <bool>false</bool>
     </attribute>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>50</x>
@@ -51,9 +51,23 @@
        </property>
       </widget>
      </item>
+     <item>
+      <widget class="QPushButton" name="addColumn">
+       <property name="text">
+        <string>Add column</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="deleteColumn">
+       <property name="text">
+        <string>Delete Column</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>50</x>

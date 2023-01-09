@@ -2,11 +2,12 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QSqlTableModel>
-#include <string>
-#include <cmath>
+#include <QTableWidgetItem>
+
+#include "database.h"
+#include "newcolumn.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -19,10 +20,6 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-
-    void createTable();
-
-    void setDatabase();
 
 private slots:
 
@@ -38,16 +35,23 @@ private slots:
 
     void on_comboBox_activated(int index);
 
+    void on_addColumn_clicked();
+
+    void on_deleteColumn_clicked();
+
+public slots:
+    void addColumn();
+
 private:
     Ui::MainWindow *ui;
-    QSqlDatabase dataBase;
-    QSqlQuery* query;
+    Database* db;
     QSqlTableModel* model;
+    QSqlQuery* query;
+    NewColumn* newColumn;
 
-    int selectedRow;
     int selectedItem;
 
-    int generateID(int length);
+    QString newColumnName;
 
     void setCombobox();
 };

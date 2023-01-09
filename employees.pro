@@ -11,12 +11,17 @@ CONFIG += c++17
 SOURCES += \
     ./main.cpp \
     ./mainwindow.cpp \
+    database.cpp \
+    newcolumn.cpp
 
 HEADERS += \
-    mainwindow.h
+    database.h \
+    mainwindow.h \
+    newcolumn.h
 
 FORMS += \
-    mainwindow.ui
+    mainwindow.ui \
+    newcolumn.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

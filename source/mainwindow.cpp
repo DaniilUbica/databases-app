@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "qheaderview.h"
 #include "ui_mainwindow.h"
 
 #include <QDebug>
@@ -9,40 +10,29 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    dataBase = QSqlDatabase::addDatabase("QSQLITE");
-    dataBase.setDatabaseName("./EmployeesDB.db");
+    db = new Database;
+    newColumn = new NewColumn;
 
-    if (!dataBase.open()){
-        throw "Can`t open database!";
-    }
+    query = db->getQuery();
+    model = db->getModel();
 
-    query = new QSqlQuery(dataBase);
-    model = new QSqlTableModel(this, dataBase);
+    db->createTable();
+    db->setDatabase();
+
+    ui->tableView->setModel(model);
 
     ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
     setCombobox();
+
+    connect(newColumn, &NewColumn::confirmed, this, &MainWindow::addColumn);
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
-    delete query;
     delete model;
-}
-
-void MainWindow::createTable()
-{
-    query->prepare("CREATE TABLE Employees(Firstname TEXT, Lastname TEXT, ID INT, Profession TEXT);");
-    query->exec();
-}
-
-void MainWindow::setDatabase()
-{
-    model->setTable("Employees");
-    model->select();
-
-    ui->tableView->setModel(model);
+    delete query;
 }
 
 void MainWindow::on_addButton_clicked()
@@ -52,30 +42,17 @@ void MainWindow::on_addButton_clicked()
     setCombobox();
 }
 
-
 void MainWindow::on_deleteButton_clicked()
 {
     ui->comboBox->clear();
-    model->removeRow(selectedRow);
+    model->removeRow(db->selectedRow);
     setCombobox();
 }
 
-
 void MainWindow::on_tableView_clicked(const QModelIndex &index)
 {
-    selectedRow = index.row();
-}
-
-int MainWindow::generateID(int length)
-{
-    srand(time(NULL));
-
-    std::string retStr = "";
-    for(int i = 0; i < length; i++){
-        retStr += std::to_string(rand() % 9 + 0);
-    }
-
-    return std::stoi(retStr);
+    db->selectedRow = index.row();
+    db->selectedColumn = index.column();
 }
 
 void MainWindow::setCombobox()
@@ -130,5 +107,28 @@ void MainWindow::on_showProf_clicked()
 void MainWindow::on_comboBox_activated(int index)
 {
     selectedItem = index;
+}
+
+void MainWindow::on_addColumn_clicked()
+{
+    newColumn->show();
+}
+
+void MainWindow::addColumn()
+{
+    newColumnName = newColumn->getColumnName();
+
+    query->prepare(QString("ALTER TABLE Employees ADD COLUMN %1 TEXT;").arg(newColumnName));
+    query->exec();
+}
+
+
+void MainWindow::on_deleteColumn_clicked()
+{
+    QVariant v = model->headerData(db->selectedColumn, Qt::Horizontal, Qt::DisplayRole);
+    QString name = v.toString();
+
+    query->prepare(QString("ALTER TABLE Employees DROP COLUMN %1;").arg(name));
+    query->exec();
 }
 
