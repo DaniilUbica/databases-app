@@ -12,16 +12,19 @@ SOURCES += \
     ./main.cpp \
     ./mainwindow.cpp \
     database.cpp \
-    newcolumn.cpp
+    newcolumn.cpp \
+    newtable.cpp
 
 HEADERS += \
     database.h \
     mainwindow.h \
-    newcolumn.h
+    newcolumn.h \
+    newtable.h
 
 FORMS += \
     mainwindow.ui \
-    newcolumn.ui
+    newcolumn.ui \
+    newtable.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

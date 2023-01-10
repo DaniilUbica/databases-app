@@ -4,7 +4,7 @@
 Database::Database()
 {
     dataBase = QSqlDatabase::addDatabase("QSQLITE");
-    dataBase.setDatabaseName("./EmployeesDatabase.db");
+    dataBase.setDatabaseName("./MainDatabase.db");
 
     if (!dataBase.open()){
         throw "Can`t open database!";

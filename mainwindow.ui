@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>700</width>
-    <height>400</height>
+    <height>412</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -61,7 +61,7 @@
      <item>
       <widget class="QPushButton" name="deleteColumn">
        <property name="text">
-        <string>Delete Column</string>
+        <string>Delete column</string>
        </property>
       </widget>
      </item>
@@ -71,7 +71,7 @@
     <property name="geometry">
      <rect>
       <x>50</x>
-      <y>270</y>
+      <y>300</y>
       <width>601</width>
       <height>26</height>
      </rect>
@@ -83,7 +83,7 @@
         <enum>Qt::RightToLeft</enum>
        </property>
        <property name="text">
-        <string>Professions List:</string>
+        <string>Selected column`s fields List:</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -93,19 +93,75 @@
      <item>
       <widget class="QComboBox" name="comboBox"/>
      </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="layoutWidget_2">
+    <property name="geometry">
+     <rect>
+      <x>50</x>
+      <y>330</y>
+      <width>601</width>
+      <height>26</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_4">
      <item>
-      <widget class="QPushButton" name="updateCombobox">
+      <widget class="QLabel" name="label_2">
+       <property name="layoutDirection">
+        <enum>Qt::RightToLeft</enum>
+       </property>
        <property name="text">
-        <string>Update List</string>
+        <string>Tables List:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="showProf">
+      <widget class="QComboBox" name="allTables"/>
+     </item>
+     <item>
+      <widget class="QPushButton" name="addTable">
        <property name="text">
-        <string>Show selected profession</string>
+        <string>Add table</string>
        </property>
       </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="deleteTable">
+       <property name="text">
+        <string>Delete table</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="layoutWidget_3">
+    <property name="geometry">
+     <rect>
+      <x>50</x>
+      <y>270</y>
+      <width>601</width>
+      <height>26</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_5">
+     <item>
+      <widget class="QLabel" name="label_3">
+       <property name="layoutDirection">
+        <enum>Qt::RightToLeft</enum>
+       </property>
+       <property name="text">
+        <string>Columns List:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="allColumns"/>
      </item>
     </layout>
    </widget>
@@ -116,7 +172,7 @@
      <x>0</x>
      <y>0</y>
      <width>700</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>

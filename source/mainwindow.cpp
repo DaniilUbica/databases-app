@@ -12,6 +12,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     db = new Database;
     newColumn = new NewColumn;
+    newTable = new NewTable;
 
     query = db->getQuery();
     model = db->getModel();
@@ -24,8 +25,11 @@ MainWindow::MainWindow(QWidget *parent)
     ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
     setCombobox();
+    setAllTables();
+    setAllColumns();
 
     connect(newColumn, &NewColumn::confirmed, this, &MainWindow::addColumn);
+    connect(newTable, &NewTable::confirmed, this, &MainWindow::addTable);
 }
 
 MainWindow::~MainWindow()
@@ -53,19 +57,22 @@ void MainWindow::on_tableView_clicked(const QModelIndex &index)
 {
     db->selectedRow = index.row();
     db->selectedColumn = index.column();
+
+    ui->comboBox->clear();
+    setCombobox();
 }
 
 void MainWindow::setCombobox()
 {
-    ui->comboBox->addItem("All professions");
+    ui->comboBox->addItem("All");
 
-    query->exec("SELECT COUNT(*) FROM Employees;");
+    query->exec(QString("SELECT COUNT(*) FROM %1;").arg(ui->allTables->itemText(selectedTable)));
 
     query->first();
 
     int numberOfRows = query->value(0).toInt();
 
-    query->prepare("SELECT DISTINCT Profession FROM Employees;");
+    query->prepare(QString("SELECT DISTINCT %1 FROM %2;").arg(ui->allColumns->itemText(selectedColumn), ui->allTables->itemText(selectedTable)));
     query->exec();
 
     for (int i = 0; i < numberOfRows; i++) {
@@ -75,22 +82,55 @@ void MainWindow::setCombobox()
     }
 
     int size = ui->comboBox->count();
+
     for (int i = 0; i < size; i++) {
         if (ui->comboBox->itemText(i) == "") {
             ui->comboBox->removeItem(i);
         }
     }
-
 }
 
-void MainWindow::on_updateCombobox_clicked()
+void MainWindow::setAllTables()
 {
-    ui->comboBox->clear();
-    setCombobox();
+    query->exec("SELECT COUNT(*) FROM sqlite_master;");
+
+    query->first();
+
+    int numberOfTables = query->value(0).toInt();
+
+    query->prepare("SELECT name FROM sqlite_master WHERE type='table';");
+    query->exec();
+
+    for (int i = 0; i < numberOfTables; i++) {
+        query->next();
+        QString table = query->value(0).toString();
+        ui->allTables->addItem(table);
+    }
 }
 
-void MainWindow::on_showProf_clicked()
+void MainWindow::setAllColumns()
 {
+    int numberOfColumns = model->columnCount();
+    for (int i = 0; i < numberOfColumns; i++) {
+        QVariant v = model->headerData(i, Qt::Horizontal, Qt::DisplayRole);
+        QString name = v.toString();
+
+        ui->allColumns->addItem(name);
+    }
+}
+
+void MainWindow::onEnterPressEvent(QKeyEvent* event)
+{
+    if (event->key() == Qt::Key_Enter) {
+        ui->comboBox->clear();
+        setCombobox();
+    }
+}
+
+void MainWindow::on_comboBox_activated(int index)
+{
+    selectedItem = index;
+
     QString profession = ui->comboBox->itemText(selectedItem);
     QString filter;
 
@@ -98,15 +138,10 @@ void MainWindow::on_showProf_clicked()
         filter = "";
     }
     else {
-        filter = QString("Profession = '%1'").arg(profession);
+        filter = QString("%2 = '%1'").arg(profession, ui->allColumns->itemText(selectedColumn));
     }
 
     model->setFilter(filter);
-}
-
-void MainWindow::on_comboBox_activated(int index)
-{
-    selectedItem = index;
 }
 
 void MainWindow::on_addColumn_clicked()
@@ -118,17 +153,64 @@ void MainWindow::addColumn()
 {
     newColumnName = newColumn->getColumnName();
 
-    query->prepare(QString("ALTER TABLE Employees ADD COLUMN %1 TEXT;").arg(newColumnName));
+    query->prepare(QString("ALTER TABLE %2 ADD COLUMN %1 TEXT;").arg(newColumnName, ui->allTables->itemText(selectedTable)));
     query->exec();
 }
 
+void MainWindow::addTable()
+{
+    newTableName = newTable->getTableName();
+
+    query->prepare(QString("CREATE TABLE %1(Field TEXT);").arg(newTableName));
+    query->exec();
+
+    ui->allTables->clear();
+    setAllTables();
+}
 
 void MainWindow::on_deleteColumn_clicked()
 {
     QVariant v = model->headerData(db->selectedColumn, Qt::Horizontal, Qt::DisplayRole);
     QString name = v.toString();
 
-    query->prepare(QString("ALTER TABLE Employees DROP COLUMN %1;").arg(name));
+    query->prepare(QString("ALTER TABLE %2 DROP COLUMN %1;").arg(name, ui->allTables->itemText(selectedTable)));
     query->exec();
+}
+
+void MainWindow::on_addTable_clicked()
+{
+    newTable->show();
+}
+
+void MainWindow::on_allTables_activated(int index)
+{
+    selectedTable = index;
+
+    QString table = ui->allTables->itemText(selectedTable);
+
+    model->setTable(QString("%1").arg(table));
+    model->select();
+
+    ui->comboBox->clear();
+    setCombobox();
+    ui->allColumns->clear();
+    setAllColumns();
+}
+
+void MainWindow::on_deleteTable_clicked()
+{
+    query->prepare(QString("DROP TABLE %1").arg(ui->allTables->itemText(selectedTable)));
+    query->exec();
+
+    ui->allTables->clear();
+    setAllTables();
+}
+
+void MainWindow::on_allColumns_activated(int index)
+{
+    selectedColumn = index;
+
+    ui->comboBox->clear();
+    setCombobox();
 }
 
