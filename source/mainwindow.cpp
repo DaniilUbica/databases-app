@@ -2,6 +2,7 @@
 #include "qheaderview.h"
 #include "ui_mainwindow.h"
 
+#include <QProcess>
 #include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent)
@@ -134,7 +135,7 @@ void MainWindow::on_comboBox_activated(int index)
     QString profession = ui->comboBox->itemText(selectedItem);
     QString filter;
 
-    if (profession == "All professions") {
+    if (profession == "All") {
         filter = "";
     }
     else {
@@ -155,6 +156,9 @@ void MainWindow::addColumn()
 
     query->prepare(QString("ALTER TABLE %2 ADD COLUMN %1 TEXT;").arg(newColumnName, ui->allTables->itemText(selectedTable)));
     query->exec();
+
+    QApplication::quit();
+    QProcess::startDetached(QApplication::applicationFilePath());
 }
 
 void MainWindow::addTable()
@@ -166,6 +170,9 @@ void MainWindow::addTable()
 
     ui->allTables->clear();
     setAllTables();
+
+    QApplication::quit();
+    QProcess::startDetached(QApplication::applicationFilePath());
 }
 
 void MainWindow::on_deleteColumn_clicked()
@@ -175,6 +182,9 @@ void MainWindow::on_deleteColumn_clicked()
 
     query->prepare(QString("ALTER TABLE %2 DROP COLUMN %1;").arg(name, ui->allTables->itemText(selectedTable)));
     query->exec();
+
+    QApplication::quit();
+    QProcess::startDetached(QApplication::applicationFilePath());
 }
 
 void MainWindow::on_addTable_clicked()
