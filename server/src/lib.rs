@@ -39,11 +39,8 @@ pub fn handle_client(mut stream: TcpStream) -> bool {
         request.pop();
         request.reverse();
         
-        let temp = Database::get_record(request);
-
-        if temp.len() > 0 {
-            stream.write_all(&buf[0..n]).unwrap();
-        }
+        Database::add_record(request);
+        stream.write_all(&buf[0..n]).unwrap();
     }
 
     if n == 0 {
