@@ -13,7 +13,7 @@ public:
     int selectedRow;
     int selectedColumn;
 
-    Database();
+    Database(QString name);
     ~Database();
 
     void createTable();

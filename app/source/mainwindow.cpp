@@ -5,15 +5,17 @@
 #include <QProcess>
 #include <QDebug>
 
-MainWindow::MainWindow(QWidget *parent)
+MainWindow::MainWindow(QString databaseName, QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
-    db = new Database;
+    this->setWindowTitle(databaseName);
+
     newColumn = new NewColumn;
     newTable = new NewTable;
+    db = new Database(databaseName);
 
     query = db->getQuery();
     model = db->getModel();
@@ -38,6 +40,12 @@ MainWindow::~MainWindow()
     delete ui;
     delete model;
     delete query;
+    delete db;
+}
+
+void MainWindow::setDatabaseName(QString name)
+{
+    databaseName = name;
 }
 
 void MainWindow::on_addButton_clicked()

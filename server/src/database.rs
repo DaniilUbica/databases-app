@@ -26,7 +26,7 @@ pub mod Database {
         connection.execute(query).expect("Error in executing the query!");
     }
 
-    pub fn get_record(values: Vec<&str>) -> Vec<String> {
+    pub fn get_record(values: &Vec<&str>) -> Vec<String> {
         let login = values[0];
         let password = values[1];
         let mut answer: Vec<String> = Vec::new();
@@ -38,7 +38,7 @@ pub mod Database {
         connection
         .iterate(query, |pairs| {
             for &(name, value) in pairs.iter() {
-                let s = format!("{} {}", name, value.unwrap());
+                let s = format!("{}", value.unwrap());
                 answer.push(s);
             }
             true

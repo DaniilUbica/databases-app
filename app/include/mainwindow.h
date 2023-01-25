@@ -20,8 +20,12 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr);
+    MainWindow(QString databaseName, QWidget *parent = nullptr);
     ~MainWindow();
+
+    Database* db;
+
+    void setDatabaseName(QString name);
 
 private slots:
 
@@ -52,7 +56,6 @@ public slots:
 
 private:
     Ui::MainWindow *ui;
-    Database* db;
     QSqlTableModel* model;
     QSqlQuery* query;
     NewColumn* newColumn;
@@ -64,6 +67,7 @@ private:
 
     QString newColumnName;
     QString newTableName;
+    QString databaseName;
 
     void setCombobox();
 
